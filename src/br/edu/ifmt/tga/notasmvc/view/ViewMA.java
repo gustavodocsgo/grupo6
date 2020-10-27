@@ -244,6 +244,7 @@ import br.edu.ifmt.tga.notasmvc.NotasMVC;
         m.setBim3(Float.parseFloat(jtfBim3.getText()));
         m.setBim4(Float.parseFloat(jtfBim4.getText()));
         c.gravaMA(m);
+        System.out.println(m.getDiscA());
     }//GEN-LAST:event_jbGravarActionPerformed
 
     private void jbImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbImprimirActionPerformed

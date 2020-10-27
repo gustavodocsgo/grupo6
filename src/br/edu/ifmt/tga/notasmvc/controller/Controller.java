@@ -1,8 +1,14 @@
 package br.edu.ifmt.tga.notasmvc.controller;
     
-import br.edu.ifmt.tga.notasmvc.model.Model;
+import br.edu.ifmt.tga.notasmvc.controllerbd.ControllerBD;
 import java.util.ArrayList;
 import java.util.List;
+import br.edu.ifmt.tga.notasmvc.model.Model;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 
     public class Controller{
     
@@ -29,7 +35,8 @@ import java.util.List;
         return media;
     }
 
-    public void gravaMA(Model m){
+    public int gravaMA(Model m){
+        
         calculaMA(m);
         lm.add(m);
         System.out.println("Dados gravados da Media Anual:" + 
@@ -40,6 +47,33 @@ import java.util.List;
                 "\n\tMédia 3º Bim: " + lm.get(lm.size() - 1).getBim3() +
                 "\n\tMédia 4º Bim: " + lm.get(lm.size() - 1).getBim4() +
                 "\n\tMédia Final: " + lm.get(lm.size() - 1).getMediaA());
+        
+        int id = 0;
+        calculaMA(m);
+        con = new ControllerBD();
+        con.conexaoBD();
+        con.instrucaoSQL("INSERT INTO media_anual(disc, nota1, nota2, nota3, nota4, mediaanual) "
+                + "VALUES (?,?,?,?,?,?)");
+        con.setPstm(1, m.getDiscA());
+        con.setPstm(2, m.getBim1());
+        con.setPstm(3, m.getBim2());
+        con.setPstm(4, m.getBim3());
+        con.setPstm(5, m.getBim4());
+        con.setPstm(6, m.getMediaA());
+        try {
+            con.getPstm().execute();
+            JOptionPane.showMessageDialog(null, "Notas gravadas com sucesso!");
+            
+            con.querySQL("SELECT MAX(id) FROM media_anual");
+            if (con.getResultSet().next()) {
+                id = con.getResultSet().getInt("MAX(id)");
+            }
+            con.desconecta();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex, "Erro ao tentar gravar!\n" + ex, 1);
+        }
+        return id;      
+        
     }
 
     public void imprimeListaMA() {
@@ -93,5 +127,6 @@ import java.util.List;
     }
 
     private final List<Model> lm = new ArrayList();
+    private ControllerBD con = null;
         
 }
